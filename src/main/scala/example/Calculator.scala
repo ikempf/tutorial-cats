@@ -1,5 +1,7 @@
 package example
 
+import cats.Foldable
+
 object Calculator {
 
   import cats.Monoid
@@ -13,6 +15,10 @@ object Calculator {
    * - combine the different T using |+|
    */
   def add[T](items: List[T])(implicit m: Monoid[T]): T = {
-    ???
+    import cats.syntax.semigroup._
+    import cats.instances.list._
+    Foldable[List].fold(items)
+    // or
+    items.foldLeft(m.empty)(_ |+| _)
   }
 }

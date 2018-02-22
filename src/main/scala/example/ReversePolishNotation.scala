@@ -34,7 +34,21 @@ object ReversePolishNotation {
    * Note: for simplicity do not implement any error handling!
    *
    */
-  def evalOne(sym: String): CalcState[Int] = ???
+  def evalOne(sym: String): CalcState[Int] = sym match {
+    case "+" => operation(_ + _)
+    case "-" => operation(_ - _)
+    case "*" => operation(_ * _)
+    case "/" => operation(_ / _)
+    case a   => State(s => (a.toInt :: s, a.toInt))
+  }
+
+  private def operation(f: (Int, Int) => Int): State[List[Int], Int] =
+    State.apply {
+      case a :: b :: t =>
+        val c = f(a, b)
+        (c :: t, c)
+      case _ => throw new IllegalArgumentException("Missing operands for given operator")
+    }
 
   /*
    * TODO 06: Fold over the list calling evalOne
@@ -43,6 +57,11 @@ object ReversePolishNotation {
    * import cats.syntax.applicative._
    * 0.pure[CalcState]
    */
-  def evalAll(sym: List[String]): CalcState[Int] = ???
+  def evalAll(sym: List[String]): CalcState[Int] =
+    sym match {
+      case h :: Nil => evalOne(h)
+      case h :: t   => evalOne(h).flatMap(_ => evalAll(t))
+      case _        => throw new IllegalArgumentException("empty list")
+    }
 
 }

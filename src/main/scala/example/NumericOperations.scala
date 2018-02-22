@@ -25,12 +25,15 @@ object NumericOperations {
    * - You should return a Vector[String] containing each step
    * - remember to 'map' the value to write ;)
    */
-  def factorial(n: Int): Int = {
-    val ans: Int = slowly {
-      if (n == 0) 1 else n * factorial(n - 1)
+  def factorial(n: Int): Writer[Vector[String], Int] = {
+    val ans = slowly {
+      if (n == 0)
+        Writer(Vector.empty[String], 1)
+      else
+        factorial(n - 1).map(_ * n)
     }
-    println(s"fact $n $ans")
-    ans
+
+    ans.flatMap(a => Writer(Vector(s"fact($n)"), a))
   }
 
 }

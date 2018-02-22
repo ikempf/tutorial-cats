@@ -2,6 +2,8 @@ package example
 
 import cats.data.Validated
 
+import scala.util.Try
+
 case class User(name: String, age: Int)
 
 object UserValidation {
@@ -21,6 +23,7 @@ object UserValidation {
 
   type FormData = Map[String, String]
   type ErrorOr[A] = Either[List[String], A]
+  type ValidOr[A] = Validated[List[String], A]
 
   import cats.instances.list._ // for semigroupal
 
@@ -34,7 +37,8 @@ object UserValidation {
    * - create a tuple with the results
    * - call mapN on the tuple to build an instance of User (e.g. using apply)
    */
-  def validateUser(params: FormData): Validated[List[String], User] = ???
+  def validateUser(params: FormData): Validated[List[String], User] =
+    (Validated.fromEither(readName(params)), Validated.fromEither(readAge(params))).mapN(User.apply)
 
   /*
    * TODO 07: implement this function
@@ -42,7 +46,8 @@ object UserValidation {
    * - call getValue
    * - vall nonBlank
    */
-  def readName(params: FormData): ErrorOr[String] = ???
+  def readName(params: FormData): ErrorOr[String] =
+    getValue("name")(params).filterOrElse(_.nonEmpty, List("name is blank"))
 
   /*
    * TODO 07: implement this function
@@ -52,11 +57,16 @@ object UserValidation {
    * - call parseInt
    * - call nonNegative
    */
-  def readAge(params: FormData): ErrorOr[Int] = ???
+  def readAge(params: FormData): ErrorOr[Int] =
+    getValue("age")(params)
+      .filterOrElse(_.nonEmpty, List("age is blank"))
+      .flatMap(s => Try(s.toInt).fold(_ => Left(List("age must be an integer")), Either.right))
+      .filterOrElse(_ > 0, List("Negative value"))
 
   /*
    * TODO 07: implement this function
    */
-  private def getValue(name: String)(data: FormData): ErrorOr[String] = ???
+  private def getValue(name: String)(data: FormData): ErrorOr[String] =
+    data.get(name).map(Either.right).getOrElse(Left(List(s"$name is not present")))
 
 }

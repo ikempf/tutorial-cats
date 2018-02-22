@@ -9,9 +9,15 @@ object Monoidal {
 object BooleanMonoidInstances {
 
   // TODO 03: implement ANDMonoid
-  //val ANDMonoid = ???
+  val ANDMonoid = new Monoid[Boolean] {
+    override def empty: Boolean = false
+    override def combine(x: Boolean, y: Boolean): Boolean = x && y
+  }
 
   // TODO 03: implement ORMonoid
-  //val ORMonoid = ???
+  val ORMonoid = new Monoid[Boolean] {
+    override def empty: Boolean = true
+    override def combine(x: Boolean, y: Boolean): Boolean = x || y
+  }
 
 }

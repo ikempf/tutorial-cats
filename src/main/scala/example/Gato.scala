@@ -9,8 +9,9 @@ object Gato {
   import cats.instances.int._
 
   // TODO 01: define equality for Gato
+  // could/should be defined using Eq[Int] and Eq[String], but lazy
   implicit val catEquality = new Eq[Gato] {
-    override def eqv(x: Gato, y: Gato): Boolean = ???
+    override def eqv(x: Gato, y: Gato): Boolean = x == y
   }
 
   // This function is here is only to avoid the clash with scalatest!

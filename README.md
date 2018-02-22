@@ -106,3 +106,29 @@ the work to the project under the project's open source license. Whether or not 
 explicitly, by submitting any copyrighted material via pull request, email, or other means you
 agree to license the material under the project's open source license and warrant that you have the
 legal authority to do so.
+
+
+# 1 
+    must_be a remplacer avec "must be"
+    utiliser Eq.eqv au lieu de === a cause du conflit, la solution utilise pas Eq je pense
+    
+# 2 
+    On peut utiliser la notation SAM dans la solution. Mais c'est moins clair pour les gens qui conaissent pas.
+    implicit val printableInt: Printable[Int] = (a: Int) => s"value=${Integer.toString(a)}"
+
+# 3
+    Possibilite d'introduire foldable en combinaison du monoid.  
+    Foldable[List].fold(items)
+    
+# 5
+    Détail mais le println de départ (s"fact $n $ans") ne correspond pas a ce qui est dans le test (s"fact($n))
+    
+# 7 
+    petite faute de frappe => vall au lieu de call
+    
+    il manque un test important
+    "handle multiple errors" in {
+        // TODO 07: make this test pass
+        val params = Map.empty[String, String]
+        validateUser(params) must be(List("name is not present", "age is not present").invalid[List[String]])
+    }
